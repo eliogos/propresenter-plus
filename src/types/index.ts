@@ -1,4 +1,4 @@
-export * from './base'
-export * from './pro'
-export * from './pro6'
-export * from './spec'
+export type * from './base.js'
+export type * from './pro.js'
+export type * from './pro6.js'
+export type * from './api.js'

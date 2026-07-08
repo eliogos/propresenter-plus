@@ -1,4 +1,4 @@
-import type { ProId } from '../types/base'
+import type { ProId } from '../types/base.js'
 
 export interface MessageTokenData {
   name:         string

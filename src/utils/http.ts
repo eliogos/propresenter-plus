@@ -1,5 +1,8 @@
+import { RequestError, TimeoutError } from '../errors/index.js'
+
 export interface HttpOptions extends RequestInit {
   baseUrl?: string
+  timeout?: number
 }
 
 export class HttpClient {
@@ -7,27 +10,63 @@ export class HttpClient {
 
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const url = this.options.baseUrl ? `${this.options.baseUrl}${path}` : path
-    const res = await fetch(url, {
-      ...this.options,
-      ...options,
-      headers: {
-        ...this.options.headers,
-        ...options.headers,
-      },
-    })
+    const timeout = options.signal ? undefined : (options as HttpOptions).timeout ?? this.options.timeout
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${options.method || 'GET'} ${path} → ${res.status}`)
+    let signal = options.signal
+    let timeoutId: any = null
+
+    if (timeout && !signal) {
+      const controller = new AbortController()
+      signal = controller.signal
+      timeoutId = setTimeout(() => controller.abort(new TimeoutError(timeout)), timeout)
     }
 
-    if (res.status === 204) return undefined as T
+    try {
+      const res = await fetch(url, {
+        ...this.options,
+        ...options,
+        ...(signal ? { signal } : {}),
+        headers: {
+          ...this.options.headers,
+          ...options.headers,
+        },
+      })
 
-    const contentType = res.headers.get('content-type')
-    if (contentType?.includes('application/json')) {
-      return res.json()
+      if (!res.ok) {
+        throw new RequestError(`HTTP ${options.method || 'GET'} ${path} → ${res.status}`, {
+          status: res.status,
+          endpoint: path,
+        })
+      }
+
+      if (res.status === 204) return undefined as T
+
+      const contentType = res.headers.get('content-type')
+      if (contentType?.includes('application/json')) {
+        return res.json()
+      }
+
+      return res.text() as unknown as T
+    } catch (err: any) {
+      if (err instanceof RequestError || err instanceof TimeoutError) {
+        throw err
+      }
+      if (err.name === 'AbortError') {
+        // If it was aborted by our timeout controller, err might be custom or we throw TimeoutError
+        if (signal?.reason instanceof TimeoutError) {
+          throw signal.reason
+        }
+        // Fallback for older environments or other abort reasons
+        if (timeoutId) {
+          throw new TimeoutError(timeout!)
+        }
+      }
+      throw err
+    } finally {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
     }
-
-    return res.text() as unknown as T
   }
 
   get<T>(path: string, options?: RequestInit) {

@@ -1,4 +1,4 @@
-import type { ProId, LookLayerType } from '../types/base'
+import type { ProId, LookLayerType } from '../types/base.js'
 
 export interface LookLayerData {
   type:       LookLayerType

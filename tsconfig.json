@@ -3,9 +3,9 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
 
     "declaration": true,
     "declarationMap": true,
@@ -24,11 +24,5 @@
 
     "types": ["node"]
   },
-  "include": ["src"],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  }
+  "include": ["src"]
 }

@@ -1,4 +1,4 @@
-import type { Pro6Options, Pro6TextStyle } from '../types/pro6'
+import type { Pro6Options, Pro6TextStyle } from '../types/pro6.js'
 
 function uuid() {
   return crypto.randomUUID()

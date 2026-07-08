@@ -1,4 +1,4 @@
-import type { ProId, Maybe, Nullable, Dict, Listener, EventMap, ApiResponse, ProList, TimerType, TimerEndAction, PlaylistType, ClearLayer, LookLayerType, ProVersion as ProVersionTag } from './base'
+import type { ProId, Maybe, Nullable, Dict, Listener, EventMap, ApiResponse, ProList, TimerType, TimerEndAction, PlaylistType, ClearLayer, LookLayerType, ProVersion as ProVersionTag } from './base.js'
 
 export type ProSlideStatus          = any
 export type ProSlide                = any

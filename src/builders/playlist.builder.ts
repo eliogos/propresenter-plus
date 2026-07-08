@@ -1,4 +1,4 @@
-import type { ProId, PlaylistType } from '../types/base'
+import type { ProId, PlaylistType } from '../types/base.js'
 
 export interface PlaylistItemData {
   id?:       ProId

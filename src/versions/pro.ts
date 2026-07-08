@@ -9,7 +9,7 @@ import type {
   ProGroupBinary,
   PresentationMeta,
   BuildOptions
-} from '../types/pro'
+} from '../types/pro.js'
 
 // Sometimes libraries will be placed inside the OneDrive root for some reason
 function findOneDriveRoot(docsPath: string): string | null {

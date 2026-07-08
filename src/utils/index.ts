@@ -1,5 +1,5 @@
-export * from './http'
-export * from './sse'
+export * from './http.js'
+export * from './sse.js'
 
 export interface ProColor {
   red:   number

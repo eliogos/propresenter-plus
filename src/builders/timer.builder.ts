@@ -1,4 +1,4 @@
-import type { ProId, TimerType, TimerEndAction } from '../types/base'
+import type { ProId, TimerType, TimerEndAction } from '../types/base.js'
 
 export interface TimerData {
   id?:             ProId

@@ -1,4 +1,4 @@
-import type { ProId, ClearLayer } from '../types/base'
+import type { ProId, ClearLayer } from '../types/base.js'
 
 export interface ClearGroupData {
   id?:    ProId
