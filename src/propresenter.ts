@@ -173,6 +173,10 @@ export class ProPresenter {
       'timers/current',
       'status/layers',
       'stage/message',
+      'announcement/active',
+      'announcement/slide_index',
+      'audio/playlist/active',
+      'audio/playlist/focused',
     ]
 
     const URL_EVENT_MAP: Record<string, keyof ProEventMap> = {
@@ -182,6 +186,10 @@ export class ProPresenter {
       'timers/current':            'timerChange',
       'status/layers':             'layerChange',
       'stage/message':             'stageMessage',
+      'announcement/active':       'announcementDestinationChange',
+      'announcement/slide_index':  'announcementIndex',
+      'audio/playlist/active':     'audioActiveChange',
+      'audio/playlist/focused':    'audioFocusedChange',
     }
 
     const runMultiplexer = async () => {
@@ -215,35 +223,10 @@ export class ProPresenter {
       }
     }
 
-    const runDirectSSE = async (path: string, eventName: keyof ProEventMap) => {
-      const run = async () => {
-        try {
-          await readSSE(
-            new Request(`${this.baseUrl}${path}?chunked=true&sse`, { signal }),
-            (raw) => { try { this.emit(eventName, JSON.parse(raw)) } catch {} },
-          )
-        } catch (err) {
-          if ((err as Error).name !== 'AbortError') {
-            this.log.error(`Direct SSE (${path}) failed:`, err)
-            if (this.options.reconnect) {
-              setTimeout(run, this.options.reconnectDelay)
-            }
-          }
-        }
-      }
-      run()
-    }
-
     this._connected = true
     this.log.debug('Connected to ProPresenter')
     this.emit('connected')
-    runDirectSSE('/v1/status/slide',              'slideChange')
-    runDirectSSE('/v1/status/layers',             'layerChange')
     runMultiplexer()
-    runDirectSSE('/v1/announcement/active',       'announcementDestinationChange')
-    runDirectSSE('/v1/announcement/slide_index',  'announcementIndex')
-    runDirectSSE('/v1/audio/playlist/active',     'audioActiveChange')
-    runDirectSSE('/v1/audio/playlist/focused',    'audioFocusedChange')
   }
 
   disconnect() {
