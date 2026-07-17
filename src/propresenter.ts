@@ -201,11 +201,11 @@ export class ProPresenter {
             body: JSON.stringify(STREAM_URLS),
             signal,
           }),
-          (raw) => {
+          (raw, eventName) => {
             try {
-              const { url, data } = JSON.parse(raw)
-              const event = URL_EVENT_MAP[url]
-              if (event) this.emit(event, data)
+              const url = eventName?.replace(/^\/v1\//, '')
+              const event = url ? URL_EVENT_MAP[url] : undefined
+              if (event) this.emit(event, JSON.parse(raw))
             } catch {}
           },
         )
